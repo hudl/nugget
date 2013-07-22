@@ -9,9 +9,12 @@ var log       = common.log(__filename);
 
 // TODO
 // - Clean up logging, make errors more noticeable
+//    - Maybe have "core" logs, and then enable per-datasource severity setting via config
 // - Make server.js more modular, expose a start() or init()
 // - Add "main" to package.json
 // - Fix inconsistent paths in logs on windows
+// - Show active datasources on dashboard
+// - Get rid of the hacky *Sync() calls in here
 
 // -- constants
 
