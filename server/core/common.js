@@ -51,7 +51,12 @@ function getJson (opts) {
     return def.promise;
 }
 
+function isEmptyObject (obj) {
+	return Object.keys(obj).length === 0;
+}
+
 module.exports = {
 	getJson: getJson,
+	isEmptyObject: isEmptyObject,
 	log: logger
 };

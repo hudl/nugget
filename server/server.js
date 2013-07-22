@@ -4,7 +4,8 @@ var server    = require('http').createServer(app);
 var io        = require('socket.io').listen(server);
 var fs        = require('fs');
 var child     = require('child_process');
-var log       = require('./core/common').log(__filename);
+var common    = require('./core/common');
+var log       = common.log(__filename);
 
 // TODO
 // - Clean up logging, make errors more noticeable
@@ -314,8 +315,10 @@ function loadDatasources (config, emitter) {
 		if (file.indexOf('.js') < 0) continue; // Only look for .js files (mainly in case the placeholder remove-me.txt still exists).
 
 		var module = file.substring(0, file.indexOf('.'));
-		require('./datasource/' + module).start(config.datasource[module] || {}, emitter);
-		log.debug('Loaded datasource module [' + module + ']' + (!config.datasource[module] ? ' (no configuration found)' : ''));
+
+		var datasourceConfig = (config.datasource ? config.datasource[module] : {}) || {};
+		require(datasourcesPath + '/' + module).start(datasourceConfig, emitter);
+		log.debug('Loaded datasource module [' + module + ']' + (common.isEmptyObject(datasourceConfig) ? ' (no configuration found)' : ''));
 		loadedCount++;
 	}
 
