@@ -4,24 +4,39 @@ var server    = require('http').createServer(app);
 var io        = require('socket.io').listen(server);
 var fs        = require('fs');
 var child     = require('child_process');
-var log       = require('./common').log(__filename);
+var log       = require('./core/common').log(__filename);
+
+// TODO
+// - Clean up logging, make errors more noticeable
+// - Make server.js more modular, expose a start() or init()
+// - Add "main" to package.json
+// - Fix inconsistent paths in logs on windows
 
 // -- constants
 
 var configPath = __dirname + '/server-config.json';
-var staticPath = __dirname + '/static';
-var viewsPath = __dirname + '/views';
+var userStaticPath = __dirname + '/user/resources';
+var coreStaticPath = __dirname + '/core/resources';
+var viewsPath = __dirname + '/core/views';
+var displaysPath = __dirname + '/user/displays';
+var datasourcesPath = __dirname + '/user/datasources';
 var defaultPort = 42420;
 var clientScriptDir = '/home/pi/wallnugget-client';
 
 io.set('log level', 1);
 
-log.debug('Starting up!');
+log.debug('Starting up');
 
 // --- general set-up
 
-var file = fs.readFileSync(configPath);
-var config = (file && JSON.parse(file)) || {};
+var config = {};
+try {
+	var file = fs.readFileSync(configPath);
+	config = (file && JSON.parse(file)) || {};
+} catch (e) {
+	log.debug('Error loading config file at [' + configPath + '], defaults will be used');
+}
+
 var availablePages = determineAvailablePages();
 
 function socketLog (socket, message) {
@@ -33,7 +48,8 @@ server.listen(config.server && config.server.port ? config.server.port : default
 
 // -- express.js routing
 
-app.use('/static', express.static(staticPath));
+app.use('/static', express.static(userStaticPath));
+app.use('/static', express.static(coreStaticPath));
 
 app.get('/', function (req, res) {
 	res.sendfile(viewsPath + '/nugget.html');
@@ -271,12 +287,14 @@ function emitNuggetDisconnect (socket) {
 
 function determineAvailablePages () {
 	var pages = [];
-	var files = fs.readdirSync(__dirname + '/static/displays');
+	var files = fs.readdirSync(displaysPath);
 	for(var i = 0; i < files.length; i++) {
+		var file = files[i];
 		var ext = file.substring(file.indexOf('.') + 1);
+		var name = file.substring(0, file.indexOf('.'));
+
 		if (ext != 'js' && ext != 'css' && ext != 'html') continue; // Mainly to exlude the placeholder remove-me.txt.
 
-		var file = files[i].substring(0, files[i].indexOf('.'));
 		if (pages.indexOf(file) === -1) pages.push(file);
 	}
 
@@ -289,14 +307,19 @@ var emitter = {
 };
 
 function loadDatasources (config, emitter) {
-	var files = fs.readdirSync(__dirname + '/datasource');
+	var files = fs.readdirSync(datasourcesPath);
+	var loadedCount = 0;
 	for (var i = 0; i < files.length; i++) {
-		if (!files[i].indexOf('.js') < 0) continue; // Only look for .js files (mainly in case the placeholder remove-me.txt still exists).
+		var file = files[i];
+		if (file.indexOf('.js') < 0) continue; // Only look for .js files (mainly in case the placeholder remove-me.txt still exists).
 
-		var file = files[i].substring(0, files[i].indexOf('.'));
-		require('./datasource/' + file).start(config.datasource[file] || {}, emitter);
+		var module = file.substring(0, file.indexOf('.'));
+		require('./datasource/' + module).start(config.datasource[module] || {}, emitter);
+		log.debug('Loaded datasource module [' + module + ']' + (!config.datasource[module] ? ' (no configuration found)' : ''));
+		loadedCount++;
 	}
-	
+
+	log.debug('Loaded ' + loadedCount + ' datasource modules' + (loadedCount === 0 ? ', maybe you should define one in [' + datasourcesPath + ']' : ''));
 }
 
 loadDatasources(config, emitter);
