@@ -1,7 +1,7 @@
 $(function () {
     console.log('Connecting');
 
-	var defaultPage = 'current-users';
+	var defaultPage = 'current-time';
 
     var socket = io.connect();
 	var loadedCss = {};
@@ -57,7 +57,7 @@ $(function () {
 	function showDisconnected () {
 		var mask = $('#disconnected-mask');
 		if (mask.length) return;
-		$('body').append('<div id="disconnected-mask">dominate</div>');
+		$('body').append('<div id="disconnected-mask">:)</div>');
 	}
 
 	socket.on('switch-page', function (name) {

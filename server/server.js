@@ -245,10 +245,8 @@ function emitCustomTextStat (socket, stat) {
 }
 
 function emitStat (source, message, dashboardOnly) {
-	var suppressLog = false && (source.indexOf('chartbeat') === 0);
-
 	var m = message;
-	if (!suppressLog) log.debug('Emit (live)  - ' + source + ' = ' + JSON.stringify(message));
+	log.debug('Emit (live)  - ' + source + ' = ' + JSON.stringify(message));
 
 	m['source'] = source;
 	if (dashboardOnly !== true) {
