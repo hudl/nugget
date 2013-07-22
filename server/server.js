@@ -296,11 +296,10 @@ function determineAvailablePages () {
 	for(var i = 0; i < files.length; i++) {
 		var file = files[i];
 		var ext = file.substring(file.indexOf('.') + 1);
-		var name = file.substring(0, file.indexOf('.'));
-
 		if (ext != 'js' && ext != 'css' && ext != 'html') continue; // Mainly to exlude the placeholder remove-me.txt.
 
-		if (pages.indexOf(file) === -1) pages.push(file);
+		var name = file.substring(0, file.indexOf('.'));
+		if (pages.indexOf(name) === -1) pages.push(name);
 	}
 
 	pages.sort();
