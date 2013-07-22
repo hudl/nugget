@@ -24,7 +24,7 @@ $(function () {
 	}
 
 	function loadPage (name) {
-		var resource = '/static/displays/' + name;
+		var resource = '/static-displays/' + name;
 		var js = resource + '.js';
 		var css = resource + '.css';
 		var html = resource + '.html';

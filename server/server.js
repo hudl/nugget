@@ -52,8 +52,9 @@ server.listen(config.server && config.server.port ? config.server.port : default
 
 // -- express.js routing
 
-app.use('/static', express.static(userStaticPath));
-app.use('/static', express.static(coreStaticPath));
+app.use('/static-user', express.static(userStaticPath));
+app.use('/static-displays', express.static(displaysPath));
+app.use('/static-core', express.static(coreStaticPath));
 
 app.get('/', function (req, res) {
 	res.sendfile(viewsPath + '/nugget.html');
