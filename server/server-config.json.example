@@ -9,6 +9,9 @@
 	},
 
 	"datasource": {
-
+		"current-time": {
+			"enabled": false,
+			"format": "time"
+		}
 	}
 }

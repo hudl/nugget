@@ -318,6 +318,11 @@ function loadDatasources (config, emitter) {
 		var module = file.substring(0, file.indexOf('.'));
 
 		var datasourceConfig = (config.datasource ? config.datasource[module] : {}) || {};
+		if (datasourceConfig.hasOwnProperty('enabled') && datasourceConfig.enabled !== true) {
+			log.debug('Not loading datasource module [' + module + '], it is disabled via configuration');
+			continue;
+		}
+
 		require(datasourcesPath + '/' + module).start(datasourceConfig, emitter);
 		log.debug('Loaded datasource module [' + module + ']' + (common.isEmptyObject(datasourceConfig) ? ' (no configuration found)' : ''));
 		loadedCount++;
