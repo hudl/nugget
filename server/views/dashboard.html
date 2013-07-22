@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nugget Dashboard</title>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+				<script src="/static/lib/underscore-min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/static/js/dashboard.js"></script>
+        <link rel="stylesheet" href="/static/css/dashboard.css" type="text/css"/>
+    </head>
+    <body>
+			<div id="spinner"></div>
+			<div id="main-view">
+				<div id="connection-status"></div>
+				<h1>Nuggets</h1>
+				<ul id="nuggets"></ul>
+
+				<h2>Custom Message</h2>
+				<div class="custom-text disabled">
+					<form>
+						<input type="text" class="custom-text-value"/>
+						<input type="text" class="custom-text-duration" value="60"/>
+						<button type="submit">Send To All</button>
+					</form>
+				</div>
+			</div>
+
+			<div id="nugget-view">
+				<button id="close">Close</button>
+
+				<h1></h1>
+				<div class="address"></div>
+
+				<h2>Current Page</h2>
+				<ul class="button-list" id="pages"></ul>
+
+				<h2>Custom Message</h2>
+				<div class="custom-text disabled">
+					<form>
+						<input type="text" class="custom-text-value"/>
+						<input type="text" class="custom-text-duration" value="60"/>
+						<button type="submit">Send</button>
+					</form>
+				</div>
+
+				<h2>Manual Intervention</h2>
+				<ul class="button-list" id="actions">
+					<li><button type="button" id="reload-page">Reload Page</button></li><!--
+					--><li><button type="button" id="reboot">Reboot</button></li><!--
+					--><li class="alpha"><button type="button" class="dangerous" id="toggle-projector">Toggle Projector</button></li><!--
+					--><li><button type="button" class="dangerous" id="projector-on">Ensure Projector On</button></li><!--
+					--><li><button type="button" class="dangerous" id="projector-off">Ensure Projector Off</button></li>
+					<li></li>
+				</ul>
+
+				<!--<h2>Logs</h2>-->
+			</div>
+    </body>
+</html>

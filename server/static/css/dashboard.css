@@ -1,0 +1,225 @@
+body {
+    font-family: Helvetica, Verdana, sans-serif;
+	background-color: black;
+	color: white;
+}
+
+h1 {
+    font-family: Helvetica, sans-serif;
+    text-transform: uppercase;
+}
+
+#connection-status {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 5px;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+#connection-status.connected {
+	color: green;
+}
+
+#connection-status.disconnected {
+	color: red;
+}
+
+#spinner {
+    display: none;
+	height: 60px;
+    opacity: 0.9;
+    background-repeat: no-repeat;
+    background-color: black;
+    background-image: url(data:image/gif;base64,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);
+    background-position: center;
+}
+
+#nuggets {
+    list-style-type: none;
+    margin: 10px 0;
+    padding: 0;
+}
+
+#nuggets > li {
+    display: inline-block;
+    background-color: #A4ED87;
+	border-radius: 4px;
+	color: #113603;
+    margin: 0 20px 0 0;
+    padding: 5px;
+    text-align: center;
+    border: 2px solid #316B1A;
+    position: relative;
+	cursor: pointer;
+}
+
+#nuggets > li:hover {
+	background-color: #447032;
+	color: white;
+}
+
+#nuggets > li > .name {
+	font-weight: bold;
+	font-size: 150%;
+}
+
+#nuggets > li > .ip-address {
+	font-size: 120%;
+	margin-bottom: 5px;
+}
+
+#nuggets > li > .page {
+	font-size: 120%;
+	margin-bottom: 5px;
+}
+
+#nuggets > li > .socket-id {
+	font-family: monospace;
+	font-size: 90%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#nugget-view {
+	display: none; /* initially hidden */
+}
+
+#nugget-view #close {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 10px;
+	padding: 15px 25px;
+	background-color: white;
+	border: 2px solid black;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+#nugget-view #close:hover {
+	background-color: #444;
+	color: white;
+}
+
+#nugget-view h1 {
+	margin-bottom: 50px;
+}
+
+#nugget-view h2 {
+	margin-top: 50px;
+	margin-bottom: 5px;
+	clear: left;
+}
+
+#nugget-view .address {
+	margin-bottom: 100px;
+}
+
+#nugget-view ul#actions {
+	width: 100%;
+}
+
+.button-list {
+	margin: 0 0 100px 0;
+	padding: 0;
+}
+
+.button-list > li {
+	display: block;
+	float: left;
+}
+
+.button-list > li.alpha {
+	clear: left;
+}
+
+#nugget-view ul#actions > li {
+	width: 33%;
+}
+
+#nugget-view ul#pages > li {
+	width: 20%;
+}
+
+.button-list button {
+	border: 4px solid black;
+	border-radius: 8px;
+	padding: 25px 0;
+	cursor: pointer;
+	font-size: 100%;
+	margin: 0;
+}
+
+#nugget-view ul#actions button.dangerous {
+	background-color: #D98686;
+}
+
+#nugget-view ul#actions button:hover {
+	background-color: #C2C20A;
+	color: black;
+}
+
+#nugget-view ul#simulations button:hover {
+    background-color: #C2C20A;
+    color: black;
+}
+
+#nugget-view ul#pages button:hover,
+#nugget-view ul#pages button.current {
+	background-color: #BEEBED;
+	color: black;
+}
+
+#nugget-view ul#actions button {
+	background-color: #E3E3A6;
+	width: 100%;
+}
+
+#nugget-view ul#simulations button {
+    background-color: #E3E3A6;
+    width: 100%;
+}
+
+#nugget-view ul#pages button {
+	background-color: #20375E;
+	color: white;
+	width: 100%;
+}
+
+.custom-text .custom-text-value,
+.custom-text .custom-text-duration,
+.custom-text button {
+	display: inline-block;
+	background-color: black;
+	color: #BEEBED;
+	border: 2px solid #BEEBED;
+	border-radius: 3px;
+	font-size: 150%;
+	padding: 5px 0;
+}
+
+.custom-text .custom-text-value {
+	padding-left: 5px;
+	width: 64%;
+}
+
+.custom-text .custom-text-duration {
+	width: 12%;
+	text-align: center;
+}
+
+.custom-text.disabled button {
+	display: none;
+}
+
+.custom-text button {
+	width: 20%;
+	cursor: pointer;
+}
+
+.custom-text button:hover {
+	background-color: #BEEBED;
+	color: black;
+}

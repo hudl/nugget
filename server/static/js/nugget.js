@@ -1,0 +1,95 @@
+$(function () {
+    console.log('Connecting');
+
+	var defaultPage = 'current-users';
+
+    var socket = io.connect();
+	var loadedCss = {};
+
+	var currentModule;
+
+	function subscribeModule (module) {
+		if (!module || !module.sources) return;
+
+		for (var i = 0; i < module.sources.length; i++) {
+			socket.emit('subscribe', module.sources[i]);
+		}
+	}
+
+	function requestModuleSources (module) {
+		if (!module || !module.sources) return;
+		for (var i = 0; i < module.sources.length; i++) {
+			socket.emit('request', module.sources[i]);
+		}
+	}
+
+	function loadPage (name) {
+		var resource = '/static/displays/' + name;
+		var js = resource + '.js';
+		var css = resource + '.css';
+		var html = resource + '.html';
+		
+		$('body > *').remove(); // Kinda hacky, would rather have events drive this.
+
+		$('body').load(html, function () {
+			require([js], function (module) {
+				currentModule = module;
+				if (!loadedCss[css]) {
+					var sheet = $('<link rel="stylesheet" type="text/css"/>').attr('href', css);
+					$('head').append(sheet);
+					loadedCss[css] = true;
+				}
+
+				socket.emit('announce-page', name);
+				subscribeModule(module);
+
+				if (module.initialize) module.initialize(socket);
+
+				setTimeout(function () {
+					// FIXME not great, would be nice to do this after we know everything's loaded
+					// but it works for now.
+					requestModuleSources(module);
+				}, 1000);
+			});
+		});
+	};
+
+	function showDisconnected () {
+		var mask = $('#disconnected-mask');
+		if (mask.length) return;
+		$('body').append('<div id="disconnected-mask">dominate</div>');
+	}
+
+	socket.on('switch-page', function (name) {
+		loadPage(name);
+	});
+
+    socket.on('connect', function () {
+		// Don't worry about removing the #disconnected-mask, loadPage() should clear the <body>.
+		loadPage(defaultPage);
+    });
+
+	socket.on('stat', function (message) {
+		if (currentModule && currentModule.onStat) currentModule.onStat.call(this, message);
+	});
+
+    socket.on('reload-page', function () {
+        console.log('Reloading page');
+        window.location.reload(true);
+    });
+
+	socket.on('disconnect', function () {
+		showDisconnected();
+	});
+
+	// Last-ditch hedge against an inability to reconnect.
+	setInterval(function () {
+		if (socket.socket.connected) return;
+		$.get('/', function () {
+			// What most likely happened is that we lost connection and all of the subsequent
+			// socket.io reconnect attempts failed. It's possible that we've reconnected
+			// but socket.io isn't attempting to reconnect anymore. If we can get to the page, reload.
+			window.location.reload(true);
+		});
+	}, 600000);
+}());

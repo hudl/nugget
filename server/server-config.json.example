@@ -1,0 +1,14 @@
+{
+	"server": {
+		"port": 42420
+	},
+
+
+	"default-pages": {
+
+	},
+
+	"datasource": {
+
+	}
+}
