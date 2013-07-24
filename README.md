@@ -48,6 +48,14 @@ Getting set up
 
 TODO
 
+Crude install steps
+
+- fork this repo
+- clone it on your server
+- `cd nugget/server`
+- `npm install`
+- `node server`
+
 Creating a new datasource
 -----
 
