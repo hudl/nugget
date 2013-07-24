@@ -4,10 +4,27 @@
 	},
 
 
+	/**
+	 * Maps hostnames to the page they should load when they connect. For
+	 * example, if one of the clients has a hostname of "pecan" and it
+	 * should initially load the "current-time" display:
+	 *
+	 *   "default-pages": {
+	 *       "pecan": "current-time"
+	 *   }
+	 */
 	"default-pages": {
 
 	},
 
+	/**
+	 * Per-datasource configuration. The object defined for each key within
+	 * the "datasource" property will get passed as the configuration object
+	 * to the datasource when it is started.
+	 *
+	 * Each datasource may also define a property, "enabled", that, if false
+	 * will cause the datasource not to start on server startup.
+	 */
 	"datasource": {
 		"current-time": {
 			"enabled": false,
