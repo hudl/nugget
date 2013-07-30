@@ -1,5 +1,3 @@
-*Client/server framework for building awesome projector dashboards.*
-
 Architecture
 =====
 
