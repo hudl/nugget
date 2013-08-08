@@ -22,7 +22,8 @@ Instructions
 
 - Pull down this directory into `/home/pi/wallnugget-client`
 - Have a look at setup.sh and execute everything in it. It hasn't been tested, so it might have problems if it's executed as a script.
-- Update server ip in Chromium 
+- Update server ip in autostart
+  - TODO autostart doesn't have the IP in source
   - TODO in setup.sh, take the provided server name and add it to the chromium startup command in autostart before copying
 - May need to manually add `auto wlan0` to `/etc/network/interfaces`
 - Power off and attach IR transmitter
