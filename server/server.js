@@ -5,6 +5,8 @@ var io        = require('socket.io').listen(server);
 var fs        = require('fs');
 var child     = require('child_process');
 var common    = require('./core/common');
+var util      = require('util');
+var events    = require('events');
 var log       = common.log(__filename);
 
 // TODO
@@ -52,6 +54,10 @@ server.listen(config.server && config.server.port ? config.server.port : default
 
 // -- express.js routing
 
+app.configure(function () {
+	app.use(express.bodyParser());
+});
+
 app.use('/static-user', express.static(userStaticPath));
 app.use('/static-displays', express.static(displaysPath));
 app.use('/static-core', express.static(coreStaticPath));
@@ -63,6 +69,30 @@ app.get('/', function (req, res) {
 app.get('/dashboard', function (req, res) {
 	res.sendfile(viewsPath + '/dashboard.html');
 });
+
+// TODO this is a hacked-together proof of concept, needs some lovin'
+function InboundEmitter () {}
+util.inherits(InboundEmitter, events.EventEmitter);
+
+var inboundEmitters = {};
+
+function createEmitter (route, app) {
+	var inboundEmitter = new InboundEmitter();
+	console.log('Inbound route is available at [' + route + ']');
+	app.post(route, function (req, res) {
+		console.log('Received incoming request on ' + route);
+		inboundEmitter.emit('inbound', req.body);
+		res.send('ok'); // TODO is this right?
+	});
+	return inboundEmitter;
+}
+
+if (config.datasource) {
+	for (var ds in config.datasource) {
+		var route = '/inbound/' + ds;
+		inboundEmitters[ds] = createEmitter(route, app);
+	}
+}
 
 // --- socket.io interactions - the meat of the server
 
@@ -155,7 +185,7 @@ io.sockets.on('connection', function (socket) {
 		});
 
 		socket.on('reboot', function (message) {
-			runCommandOnClient(message.socket, '"sudo reboot"');
+			runCommandOnClient(message.socket, '"sudo reboot"'); // TODO needs a sudo killall chromium, or a reboot script out there.
 		});
 
 		socket.on('custom-text', function (message) {
@@ -195,7 +225,6 @@ function switchPage (socket, newPage) {
 function subscribeToStat (socket, source) {
 	socketLog(socket, 'subscribed to stat ' + source);
 	socket.join('stat/' + source);
-	emitStatFromCache(socket, source);
 	emitNuggetInfo(socket);
 }
 
@@ -244,7 +273,7 @@ function emitCustomTextStat (socket, stat) {
 	});
 }
 
-function emitStat (source, message, dashboardOnly) {
+function emitStat (source, message, dashboardOnly, cache) {
 	var m = message;
 	log.debug('Emit (live)  - ' + source + ' = ' + JSON.stringify(message));
 
@@ -253,7 +282,10 @@ function emitStat (source, message, dashboardOnly) {
 		io.sockets.in('stat/' + source).emit('stat', message);
 	}
 	io.sockets.in('dashboard').emit('stat', message);
-	latestStats[source] = message;
+
+	if (cache !== false) {
+		latestStats[source] = message;
+	}
 }
 
 function pageFor (socket) {
@@ -305,10 +337,12 @@ function determineAvailablePages () {
 }
 
 var emitter = {
-	emitStat: emitStat
+	emitStat: function (source, message, cache) {
+		emitStat(source, message, false, cache);
+	}
 };
 
-function loadDatasources (config, emitter) {
+function loadDatasources (config, emitter, receiver) {
 	var files = fs.readdirSync(datasourcesPath);
 	var loadedCount = 0;
 	for (var i = 0; i < files.length; i++) {
@@ -323,6 +357,7 @@ function loadDatasources (config, emitter) {
 			continue;
 		}
 
+		var receiver = inboundEmitters[module] || undefined;
 		require(datasourcesPath + '/' + module).start(datasourceConfig, emitter);
 		log.debug('Loaded datasource module [' + module + ']' + (common.isEmptyObject(datasourceConfig) ? ' (no configuration found)' : ''));
 		loadedCount++;
