@@ -32,13 +32,13 @@ $(function () {
 		$('body > *').remove(); // Kinda hacky, would rather have events drive this.
 
 		$('body').load(html, function () {
+			if (!loadedCss[css]) {
+				var sheet = $('<link rel="stylesheet" type="text/css"/>').attr('href', css);
+				$('head').append(sheet);
+				loadedCss[css] = true;
+			}
 			require([js], function (module) {
 				currentModule = module;
-				if (!loadedCss[css]) {
-					var sheet = $('<link rel="stylesheet" type="text/css"/>').attr('href', css);
-					$('head').append(sheet);
-					loadedCss[css] = true;
-				}
 
 				socket.emit('announce-page', name);
 				subscribeModule(module);
