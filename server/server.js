@@ -339,6 +339,10 @@ function determineAvailablePages () {
 var emitter = {
 	emitStat: function (source, message, cache) {
 		emitStat(source, message, false, cache);
+	},
+
+	amendCachedStat: function (source, message) {
+		latestStats[source] = message;
 	}
 };
 
