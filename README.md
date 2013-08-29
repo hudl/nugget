@@ -57,3 +57,30 @@ For each display you should define exactly one file with the same name. For a di
 - [`server/user/displays/current-time.html`](https://github.com/hudl/nugget/blob/master/server/user/displays/current-time.html)
 
 Each of the links above is to an example that works with the `system-time` datasource (above).
+
+Making It Go
+---
+
+<sub>Note: This assumes you're running the server on linux. For Windows, some additional work may be required.</sub>
+
+1. [Download and install node.js](http://nodejs.org/download/)
+2. Switch to the `server/` directory and install dependencies with `npm`
+
+        npm install
+        npm install forever -g
+
+3. Start the server
+
+        ./start.sh
+        
+    This uses `forever` to run `node server.js`. You can list running processes with `forever list` and stop the server with `forever stop server.js`. See the [`forever` documentation](https://github.com/nodejitsu/forever) for more details.
+
+4. Open up a browser and visit:
+
+    - `http://localhost:42420` to load a display
+    - `http://localhost:42420/dashboard` to load the nugget control panel
+
+Projectors and Raspberry Pi
+---
+
+Coming soon!
