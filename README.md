@@ -1,7 +1,7 @@
 What's a nugget?
 ---
 
-It's a simple dashboard. It's meant as an [information radiator](http://alistair.cockburn.us/Information+radiator), although not perhaps in the typical sense.
+It's a simple [communal dashboard](http://martinfowler.com/bliki/CommunalDashboard.html) (or [information radiator](http://alistair.cockburn.us/Information+radiator)), although perhaps not in the typical sense.
 
 While a lot of dashboards are complex and meant for reacting and driving decision making, nuggets are more about creating general awareness. And looking awesome.
 
