@@ -1,7 +1,9 @@
 What's a nugget?
 ---
 
-It's a simple dashboard. It's meant as an information radiator, and not intended for use as a decision-making tool.
+It's a simple dashboard. It's meant as an [information radiator](http://alistair.cockburn.us/Information+radiator), although not perhaps in the typical sense.
+
+While a lot of dashboards are complex and meant for reacting and driving decision making, nuggets are more about creating general awareness. And looking awesome.
 
 Here's an example - Hudl's concurrent user count:
 
@@ -51,7 +53,7 @@ Display JavaScript, HTML, and CSS goes in [`server/user/displays`](https://githu
 For each display you should define exactly one file with the same name. For a display called `current-time`, you'll create:
 
 - [`server/user/displays/current-time.js`](https://github.com/hudl/nugget/blob/master/server/user/displays/current-time.js)
-- `server/user/displays/current-time.css`(https://github.com/hudl/nugget/blob/master/server/user/displays/current-time.css)
-- `server/user/displays/current-time.html`(https://github.com/hudl/nugget/blob/master/server/user/displays/current-time.html)
+- [`server/user/displays/current-time.css`](https://github.com/hudl/nugget/blob/master/server/user/displays/current-time.css)
+- [`server/user/displays/current-time.html`](https://github.com/hudl/nugget/blob/master/server/user/displays/current-time.html)
 
 Each of the links above is to an example that works with the `system-time` datasource (above).
