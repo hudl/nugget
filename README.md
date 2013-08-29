@@ -77,8 +77,8 @@ Making It Go
 
 4. Open up a browser and visit:
 
-    - `http://localhost:42420` to load a display
-    - `http://localhost:42420/dashboard` to load the nugget control panel
+  - `http://localhost:42420` to load a display
+  - `http://localhost:42420/dashboard` to load the nugget control panel
 
 Projectors and Raspberry Pi
 ---
