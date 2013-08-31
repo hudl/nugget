@@ -25,6 +25,9 @@ $(function () {
 
 	function loadPage (name) {
 		console.log('Loading display: ' + name);
+
+		history.replaceState({ display: name }, '', '/display/' + name);
+
 		var resource = '/static-displays/' + name;
 		var js = resource + '.js';
 		var css = resource + '.css';
@@ -61,19 +64,19 @@ $(function () {
 		$('body').append('<div id="disconnected-mask">:)</div>');
 	}
 
+	function getDisplayFromUrl () {
+		var displayIndex = document.URL.indexOf('/display/');
+		if (displayIndex < 0) return undefined;
+		return document.URL.substring(displayIndex + '/display/'.length);
+	}
+
 	socket.on('switch-page', function (name) {
 		loadPage(name);
 	});
 
     socket.on('connect', function () {
 		// Don't worry about removing the #disconnected-mask, loadPage() should clear the <body>.
-		var page = defaultPage;
-
-		var displayIndex = document.URL.indexOf('/display/');
-		if (displayIndex >= 0) {
-			page = document.URL.substring(displayIndex + '/display/'.length);
-		}
-
+		var page = getDisplayFromUrl() || defaultPage;
 		loadPage(page);
     });
 
