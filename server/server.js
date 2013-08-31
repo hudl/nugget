@@ -43,7 +43,7 @@ try {
 	log.debug('Error loading config file at [' + configPath + '], defaults will be used');
 }
 
-var availablePages = determineAvailablePages();
+var availableDisplays = determineAvailableDisplays();
 
 function socketLog (socket, message) {
 	var hostname = hostnames[socket.id];
@@ -70,6 +70,16 @@ app.get('/dashboard', function (req, res) {
 	res.sendfile(viewsPath + '/dashboard.html');
 });
 
+app.get('/display/*', function (req, res) {
+	var display = req.url.substring(req.url.lastIndexOf('/') + 1);
+	log.debug('Client requested display via path: ' + display);
+	if (availableDisplays.indexOf(display) < 0) {
+		res.send(404, 'There is no display named [' + display + ']');
+		return;
+	}
+	res.sendfile(viewsPath + '/nugget.html');
+});
+
 // TODO this is a hacked-together proof of concept, needs some lovin'
 function InboundEmitter () {}
 util.inherits(InboundEmitter, events.EventEmitter);
@@ -78,9 +88,9 @@ var inboundEmitters = {};
 
 function createEmitter (route, app) {
 	var inboundEmitter = new InboundEmitter();
-	console.log('Inbound route is available at [' + route + ']');
+	log.debug('Inbound route is available at [' + route + ']');
 	app.post(route, function (req, res) {
-		console.log('Received incoming request on ' + route);
+		log.debug('Received incoming request on ' + route);
 		inboundEmitter.emit('inbound', req.body);
 		res.send('ok'); // TODO is this right?
 	});
@@ -311,7 +321,7 @@ function emitNuggetInfo (socket) { // 'socket' is the socket to emit info for (n
 }
 
 function emitAvailablePages () {
-	io.sockets.in('dashboard').emit('available-pages', availablePages);
+	io.sockets.in('dashboard').emit('available-pages', availableDisplays);
 }
 
 function emitNuggetDisconnect (socket) {
@@ -320,13 +330,13 @@ function emitNuggetDisconnect (socket) {
 	});
 }
 
-function determineAvailablePages () {
+function determineAvailableDisplays () {
 	var pages = [];
 	var files = fs.readdirSync(displaysPath);
 	for(var i = 0; i < files.length; i++) {
 		var file = files[i];
 		var ext = file.substring(file.indexOf('.') + 1);
-		if (ext != 'js' && ext != 'css' && ext != 'html') continue; // Mainly to exlude the placeholder remove-me.txt.
+		if (ext != 'js' && ext != 'css' && ext != 'html') continue; // Mainly to exclude the placeholder remove-me.txt.
 
 		var name = file.substring(0, file.indexOf('.'));
 		if (pages.indexOf(name) === -1) pages.push(name);
