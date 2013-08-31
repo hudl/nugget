@@ -24,6 +24,7 @@ $(function () {
 	}
 
 	function loadPage (name) {
+		console.log('Loading display: ' + name);
 		var resource = '/static-displays/' + name;
 		var js = resource + '.js';
 		var css = resource + '.css';
@@ -66,7 +67,14 @@ $(function () {
 
     socket.on('connect', function () {
 		// Don't worry about removing the #disconnected-mask, loadPage() should clear the <body>.
-		loadPage(defaultPage);
+		var page = defaultPage;
+
+		var displayIndex = document.URL.indexOf('/display/');
+		if (displayIndex >= 0) {
+			page = document.URL.substring(displayIndex + '/display/'.length);
+		}
+
+		loadPage(page);
     });
 
 	socket.on('stat', function (message) {
