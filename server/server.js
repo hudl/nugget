@@ -125,7 +125,7 @@ io.sockets.on('connection', function (socket) {
 		emitNuggetInfo(socket);
 	});
 
-	if (socket.handshake.address.address != 127.0.0.1) {
+	if (socket.handshake.address.address !== '127.0.0.1') {
 		child.exec('ssh -oBatchMode=yes -o "StrictHostKeyChecking no" -tt pi@' + socket.handshake.address.address + ' hostname', function (err, stdout, stderr) {
 			var hostname = stdout.trim();
 			if (hostname.length > 0) {
@@ -172,6 +172,8 @@ io.sockets.on('connection', function (socket) {
 		function runCommandOnClient(socketId, command) {
 			var socket = io.sockets.sockets[socketId];
 			var addr = socket.handshake.address.address;
+			if (addr === '127.0.0.1') return;
+
 			var fullCommand = 'ssh -oBatchMode=yes -o "StrictHostKeyChecking no" -tt pi@' + addr + ' ' + command;
 
 			socketLog(socket, 'Running command [' + fullCommand + ']');
