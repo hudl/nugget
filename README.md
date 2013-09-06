@@ -24,6 +24,11 @@ How do I make one?
 
 Still interested? Continue on for more detail.
 
+Presentation Slides
+---
+
+This project has been the subject of a presentation. [See the slides](https://speakerdeck.com/robhruska/nuggets).
+
 Project Structure
 ---
 
