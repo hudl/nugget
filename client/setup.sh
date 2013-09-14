@@ -23,6 +23,8 @@ cp $DIR/conf/autostart /home/pi/.config/lxsession/LXDE/autostart
 
 sudo bash -c 'echo "$1" > /etc/hostname'
 
+# Manually add hostname to /etc/hosts for 127.0.0.1, and optionally the device IP.
+
 sudo bash -c 'echo "0/5 * * * * /home/pi/wallnugget-client/pingreboot.sh $2 >> /var/log/pingreboot.log" > /etc/cron.d/pingreboot'
 
 # Possibly adjust the times on these per nugget.

@@ -1,75 +1,91 @@
-Architecture
-=====
+What's a nugget?
+---
 
-[TODO Image]
+It's a simple [communal dashboard](http://martinfowler.com/bliki/CommunalDashboard.html) (or [information radiator](http://alistair.cockburn.us/Information+radiator)), although perhaps not in the typical sense.
 
-Terms
-=====
+While a lot of dashboards are complex and meant for reacting and driving decision making, nuggets are more about creating general awareness. And looking awesome.
 
-So that we're on the same page, here are a few quick definitions that you'll see in guides and the code.
+Here's an example - Hudl's concurrent user count:
 
-**Server**
+![Current Users](http://i.imgur.com/NEIJCSS.png "Concurrent Users")
 
-The node.js host that clients connect to. Responsible for aggregating data and pushing stats to clients. This is where you'll be implementing your own datasources and displays.
+The number moves up and down in real time.
 
-**Client**
+You can put one up on a spare monitor or a TV, but for maximum #mindblown, you should project it onto a surface:
 
-A browser that's connected to the server and displaying stats. Could be your local browser, or Chromium running on a Raspberry Pi.
+![Current Users projected onto a floor](http://i.imgur.com/vwylvFn.jpg "Concurrent Users")
 
-**Display**
+How do I make one?
+---
 
-The page that actually gets shown by a client - what users see. "Display" is synonymous with "Nugget" - you might define a "Current Users" nugget (i.e. display) and a "Latest Tweet" nugget and show them in different locations.
+1. Fork this repository
+2. Create a datasource and a display
+3. (optional) Get a projector
 
-Displays are just a page in a browser, which means you write them like you'd build any other web page. The entire world of JavaScript, CSS, and everything else is at your disposal.
+Still interested? Continue on for more detail.
 
-A display can be built from several different datasources.
+Presentation Slides
+---
 
-[TODO Example]
+This project has been the subject of a presentation. [See the slides](https://speakerdeck.com/robhruska/nuggets).
 
-**Datasource**
+Project Structure
+---
 
-On the server, a bit of code that grabs data, usually from a remote location, and turns it into something consumable by a display.
+The system is just a simple client-server architecture, with a node.js/socket.io server retrieving and curating data, and a browser/socket.io client subscribing to data events fired by the server.
 
-A datasource might connect to a streaming API, or might poll and scrape a page somewhere.
+![Architecture](http://i.imgur.com/h1RoOJC.png "Architecture")
 
-**Stat**
+Terminology
+---
 
-A message containing some data for a display. Stats are published/emitted by datasources.
+- **Stat** - A (javascript object) message containing a small piece of data to be displayed.
+- **Datasource** - A node.js module on the server that grabs data from one or more external sources, builds them into a stat, and emits that stat.
+- **Display** - A require.js module in a browser client that consumes stats and renders them.
 
-**Dashboard**
+Datasource
+---
 
-Although this whole project works with "dashboards", in our context it just refers to a control panel of sorts (hosted by the server) that shows active clients and provides the ability to control them. Available at `http://server:42420/dashboard`.
+Datasource modules go in [`server/user/datasource`](https://github.com/hudl/nugget/tree/master/server/user/datasources).
 
-[TODO Screenshot]
+See a simple, documented [Current System Time datasource example](https://github.com/hudl/nugget/blob/master/server/user/datasources/current-time.js).
 
-The Server
-=====
+Display
+---
 
-Getting set up
------
+Display JavaScript, HTML, and CSS goes in [`server/user/displays`](https://github.com/hudl/nugget/tree/master/server/user/displays).
 
-TODO
+For each display you should define exactly one file with the same name. For a display called `current-time`, you'll create:
 
-Crude install steps
+- [`server/user/displays/current-time.js`](https://github.com/hudl/nugget/blob/master/server/user/displays/current-time.js)
+- [`server/user/displays/current-time.css`](https://github.com/hudl/nugget/blob/master/server/user/displays/current-time.css)
+- [`server/user/displays/current-time.html`](https://github.com/hudl/nugget/blob/master/server/user/displays/current-time.html)
 
-- fork this repo
-- clone it on your server
-- `cd nugget/server`
-- `npm install`
-- `npm install -g forever`
-- `./start.sh`
+Each of the links above is to an example that works with the `system-time` datasource (above).
 
-Creating a new datasource
------
+Making It Go
+---
 
-TODO
+<sub>Note: This assumes you're running the server on linux. For Windows, some additional work may be required.</sub>
 
-Creating a new display
------
+1. [Download and install node.js](http://nodejs.org/download/)
+2. Switch to the `server/` directory and install dependencies with `npm`
 
-TODO
+        npm install
+        npm install forever -g
 
-The Clients
-=====
+3. Start the server
 
-TODO
+        ./start.sh
+        
+    This uses `forever` to run `node server.js`. You can list running processes with `forever list` and stop the server with `forever stop server.js`. See the [`forever` documentation](https://github.com/nodejitsu/forever) for more details.
+
+4. Open up a browser and visit:
+
+  - `http://localhost:42420` to load a display
+  - `http://localhost:42420/dashboard` to load the nugget control panel
+
+Projectors and Raspberry Pi
+---
+
+Coming soon!
