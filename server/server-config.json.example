@@ -8,9 +8,12 @@
 	},
 
 	"datasource": {
-		"current-time": {
+		"system-time": {
 			"enabled": true,
 			"format": "time"
-		}
+		},
+		"another-datasource": {
+			"name": "value"
+		}	
 	}
 }
