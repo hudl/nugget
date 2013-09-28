@@ -88,4 +88,13 @@ Making It Go
 Projectors and Raspberry Pi
 ---
 
-Coming soon!
+More coming soon.
+
+These are the parts I used that've worked pretty well for me. I'd recommend price shopping a bit for them.
+
+- [Raspberry Pi](http://www.newegg.com/Product/Product.aspx?Item=9SIA1ZY0K49948&nm_mc=KNC-GoogleMKP&cm_mmc=KNC-GoogleMKP-_-pla-_-PDAs%2c+Dictionaries+%26+Translators-_-9SIA1ZY0K49948)
+- [Acer X1220H 2700 lumen projector](http://www.bhphotovideo.com/bnh/controller/home?O=&sku=855724&is=REG&Q=&A=details)
+- [Edimax EW7811Un WiFi adapter](http://www.amazon.com/gp/product/B003MTTJOY/ref=oh_details_o09_s00_i04?ie=UTF8&psc=1)
+- [Rosewill 4-port powered USB hub](http://www.amazon.com/gp/product/B00552PMN8/ref=oh_details_o09_s00_i01?ie=UTF8&psc=1)
+- [PowerGen 2.4A USB wall charger](http://www.amazon.com/gp/product/B0073FE1F0/ref=oh_details_o09_s00_i00?ie=UTF8&psc=1)
+- [Rosewill RPM-MP0010 projector mount](http://www.amazon.com/gp/product/B0073FE1F0/ref=oh_details_o09_s00_i00?ie=UTF8&psc=1)
