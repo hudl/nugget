@@ -83,30 +83,6 @@ app.get('/display/*', function (req, res) {
 	res.sendfile(viewsPath + '/nugget.html');
 });
 
-// TODO this is a hacked-together proof of concept, needs some lovin'
-function InboundEmitter () {}
-util.inherits(InboundEmitter, events.EventEmitter);
-
-var inboundEmitters = {};
-
-function createEmitter (route, app) {
-	var inboundEmitter = new InboundEmitter();
-	log.debug('Inbound route is available at [' + route + ']');
-	app.post(route, function (req, res) {
-		log.debug('Received incoming request on ' + route);
-		inboundEmitter.emit('inbound', req.body);
-		res.send('ok'); // TODO is this right?
-	});
-	return inboundEmitter;
-}
-
-if (config.datasource) {
-	for (var ds in config.datasource) {
-		var route = '/inbound/' + ds;
-		inboundEmitters[ds] = createEmitter(route, app);
-	}
-}
-
 // --- socket.io interactions - the meat of the server
 
 var latestStats = {}; // Most recent stat values, used when new connections are established.
@@ -363,12 +339,29 @@ var emitter = {
 	}
 };
 
-function loadDatasources (config, emitter, receiver) {
+function loadDatasources (config, emitter) {
 	var files = fs.readdirSync(datasourcesPath);
 	var loadedCount = 0;
+
+	function createInboundEmitter (route, app) {
+		function InboundEmitter () {}
+		util.inherits(InboundEmitter, events.EventEmitter);
+
+		var inbound = new InboundEmitter();
+		log.debug('Inbound route is available at [' + route + ']');
+		app.post(route, function (req, res) {
+			log.debug('Received incoming request on ' + route);
+			inbound.emit('inbound', req.body);
+			res.send('ok'); // TODO is this right?
+		});
+		return inbound;
+	}
+
 	for (var i = 0; i < files.length; i++) {
 		var file = files[i];
-		if (file.indexOf('.js') < 0) continue; // Only look for .js files (mainly in case the placeholder remove-me.txt still exists).
+
+		// Only look for .js files (mainly in case the placeholder remove-me.txt still exists).
+		if (file.indexOf('.js') < 0) continue;
 
 		var module = file.substring(0, file.indexOf('.'));
 
@@ -378,8 +371,10 @@ function loadDatasources (config, emitter, receiver) {
 			continue;
 		}
 
-		var receiver = inboundEmitters[module] || undefined;
-		require(datasourcesPath + '/' + module).start(datasourceConfig, emitter);
+		var route = '/inbound/' + module;
+		var inbound = createInboundEmitter(route, app);
+
+		require(datasourcesPath + '/' + module).start(datasourceConfig, emitter, inbound);
 		log.debug('Loaded datasource module [' + module + ']' + (common.isEmptyObject(datasourceConfig) ? ' (no configuration found)' : ''));
 		loadedCount++;
 	}
