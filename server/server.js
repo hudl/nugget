@@ -36,11 +36,14 @@ log.debug('Starting up');
 // --- general set-up
 
 var config = {};
-try {
-	var file = fs.readFileSync(configPath);
-	config = (file && JSON.parse(file)) || {};
-} catch (e) {
-	log.debug('Error loading config file at [' + configPath + '], defaults will be used');
+if (fs.existsSync(configPath)) {
+	try {
+		var file = fs.readFileSync(configPath);
+		config = (file && JSON.parse(file)) || {};
+	} catch (e) {
+		log.error('Config file exists at [' + configPath + '], but I couldn\'t parse it as JSON. You should fix that.');
+		return;
+	}
 }
 
 var availableDisplays = determineAvailableDisplays();
