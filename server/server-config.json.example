@@ -15,5 +15,7 @@
 		"another-datasource": {
 			"name": "value"
 		}	
-	}
+	},
+
+	"keypress-rotation": ["current-time"]
 }

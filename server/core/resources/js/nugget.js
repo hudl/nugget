@@ -8,6 +8,8 @@ $(function () {
 
 	var currentModule;
 
+	var allowNav = false;
+
 	function subscribeModule (module) {
 		if (!module || !module.sources) return;
 
@@ -26,34 +28,41 @@ $(function () {
 	function loadPage (name) {
 		console.log('Loading display: ' + name);
 
-		history.replaceState({ display: name }, '', '/display/' + name);
+		allowNav = false;
+		$('body').fadeOut(200, function () {
 
-		var resource = '/static-displays/' + name;
-		var js = resource + '.js';
-		var css = resource + '.css';
-		var html = resource + '.html';
+			history.replaceState({ display: name }, '', '/display/' + name);
+
+			var resource = '/static-displays/' + name;
+			var js = resource + '.js';
+			var css = resource + '.css';
+			var html = resource + '.html';
 		
-		$('body > *').remove(); // Kinda hacky, would rather have events drive this.
+			$('body > *').remove(); // Kinda hacky, would rather have events drive this.
 
-		$('body').load(html, function () {
-			if (!loadedCss[css]) {
-				var sheet = $('<link rel="stylesheet" type="text/css"/>').attr('href', css);
-				$('head').append(sheet);
-				loadedCss[css] = true;
-			}
-			require([js], function (module) {
-				currentModule = module;
+			$('body').load(html, function () {
+				if (!loadedCss[css]) {
+					var sheet = $('<link rel="stylesheet" type="text/css"/>').attr('href', css);
+					$('head').append(sheet);
+					loadedCss[css] = true;
+				}
 
-				socket.emit('announce-page', name);
-				subscribeModule(module);
+				require([js], function (module) {
+					currentModule = module;
 
-				if (module.initialize) module.initialize(socket);
+					socket.emit('announce-page', name);
+					subscribeModule(module);
 
-				setTimeout(function () {
-					// FIXME not great, would be nice to do this after we know everything's loaded
-					// but it works for now.
-					requestModuleSources(module);
-				}, 1000);
+					if (module.initialize) module.initialize(socket);
+
+					setTimeout(function () {
+						// FIXME not great, would be nice to do this after we know everything's loaded
+						// but it works for now.
+						requestModuleSources(module);
+						$('body').fadeIn(500);
+						allowNav = true;
+					}, 200);
+				});
 			});
 		});
 	};
@@ -103,4 +112,14 @@ $(function () {
 			window.location.reload(true);
 		});
 	}, 600000);
+
+	$(document).keyup(function (e) {
+		if (allowNav && (e.which == 37)) {
+			socket.emit('prev-display', getDisplayFromUrl());
+		}
+
+		if (allowNav && (e.which == 39)) {
+			socket.emit('next-display', getDisplayFromUrl());
+		}
+	});
 }());

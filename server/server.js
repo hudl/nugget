@@ -201,6 +201,26 @@ io.sockets.on('connection', function (socket) {
 		socketLog(socket, 'disconnected');
 		emitNuggetDisconnect(socket);
 	});
+
+	socket.on('prev-display', function (currentDisplay) {
+		if (!config['keypress-rotation']) return;
+
+		var rotation = config['keypress-rotation'];
+		var pos = rotation.indexOf(currentDisplay) - 1;
+		if (pos < 0) pos = rotation.length - 1;
+
+		switchPage(socket, rotation[pos]);
+	});
+
+	socket.on('next-display', function (currentDisplay) {
+		if (!config['keypress-rotation']) return;
+
+		var rotation = config['keypress-rotation'];
+		var pos = rotation.indexOf(currentDisplay) + 1;
+		if (pos >= rotation.length) pos = 0;
+
+		switchPage(socket, rotation[pos]);
+	});
 });
 
 function switchPage (socket, newPage) {
