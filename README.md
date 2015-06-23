@@ -1,5 +1,6 @@
 What's a nugget?
 ---
+[![](https://img.shields.io/badge/hudl-OSS-orange.svg)](http://hudl.github.io/)
 
 It's a simple [communal dashboard](http://martinfowler.com/bliki/CommunalDashboard.html) (or [information radiator](http://alistair.cockburn.us/Information+radiator)), although perhaps not in the typical sense.
 
